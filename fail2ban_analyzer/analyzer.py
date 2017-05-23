@@ -4,10 +4,14 @@ Created on 23.05.2017
 @author: christophbecker
 '''
 import fileinput
+import datetime
+import time
 
+def convert_time(timest):
+    fixed_ts = timest.split(',')[0]
+    return time.strptime(fixed_ts,'%Y-%m-%d %H:%M:%S')
 
 class BanAlyzer():
-
     def __init__(self):
         self.bandict = {}
 
@@ -37,7 +41,8 @@ class BanAlyzer():
             
     def report(self):
         for key, value in self.bandict.items():
-            print(key, value)
+            if len(value['ban']) > 1:
+                print(key, value)
             
 if __name__ == '__main__':
     ba = BanAlyzer()
