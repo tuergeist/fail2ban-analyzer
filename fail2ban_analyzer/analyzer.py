@@ -4,12 +4,19 @@ Created on 23.05.2017
 @author: christophbecker
 '''
 import fileinput
-import datetime
+from datetime import datetime
 import time
+from time import mktime
+from lib2to3.pytree import convert
+from distutils.msvccompiler import convert_mbcs
 
 def convert_time(timest):
+    """
+    @return: datetime
+    """
     fixed_ts = timest.split(',')[0]
-    return time.strptime(fixed_ts,'%Y-%m-%d %H:%M:%S')
+    time_tuple = time.strptime(fixed_ts,'%Y-%m-%d %H:%M:%S')
+    return datetime.fromtimestamp(mktime(time_tuple)) 
 
 class BanAlyzer():
     def __init__(self):
@@ -43,6 +50,12 @@ class BanAlyzer():
         for key, value in self.bandict.items():
             if len(value['ban']) > 1:
                 print(key, value)
+                old = None
+                for timest in value['ban']:
+                    dt = convert_time(timest)
+                    if old is not None:
+                        print(old, dt, dt - old)
+                    old = dt
             
 if __name__ == '__main__':
     ba = BanAlyzer()
