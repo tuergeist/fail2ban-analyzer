@@ -6,36 +6,45 @@ Created on 23.05.2017
 from datetime import datetime
 import fileinput
 import time
+
+
 def convert_time(timest):
     """Converts a string into a datetime
     
     timestr -- input time string of '%Y-%m-%d %H:%M:%S'
     """
     fixed_ts = timest.split(',')[0]
-    time_tuple = time.strptime(fixed_ts,'%Y-%m-%d %H:%M:%S')
-    return datetime.fromtimestamp(time.mktime(time_tuple)) 
+    time_tuple = time.strptime(fixed_ts, '%Y-%m-%d %H:%M:%S')
+    return datetime.fromtimestamp(time.mktime(time_tuple))
+
 
 class BanAlyzer():
     def __init__(self):
         self.bandict = {}
 
-    def add_ban(self, timest, ip):
+    def _check_init_ip(self, ip):
         if ip not in self.bandict:
-            self.bandict[ip] = {'ban':[], 'unban':[]}
+            self.bandict[ip] = {'ban': [], 'unban': []}
+
+    def _strip_timest_and_ip(self, line):
+        line_parts = line.split(' ')
+        timest = " ".join(line_parts[0:2])
+        banned_ip = line_parts[-1].strip()
+        return timest, banned_ip
+
+    def add_ban(self, timest, ip):
+        self._check_init_ip(ip)
         self.bandict[ip]['ban'].append(timest)
 
     def add_unban(self, timest, ip):
-        if ip not in self.bandict:
-            self.bandict[ip] = {'ban':[], 'unban':[]}
+        self._check_init_ip(ip)
         self.bandict[ip]['unban'].append(timest)
 
     def process(self, line):
         if 'fail2ban.actions' in line:
-            #print(line[:-1])
             if ' Ban ' in line:
-                line_parts = line.split(' ')
-                timest = " ".join(line_parts[0:2])
-                banned_ip = line_parts[-1].strip()
+                
+                timest, banned_ip = self._strip_timest_and_ip(line)
                 self.add_ban(timest, banned_ip)
             elif ' Unban ' in line:
                 line_parts = line.split(' ')
