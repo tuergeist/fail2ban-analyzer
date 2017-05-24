@@ -8,7 +8,6 @@ import fileinput
 import time
 
 
-
 def convert_time(timest):
     """Converts a string into a datetime
 
@@ -22,7 +21,7 @@ def convert_time(timest):
 class BanAlyzer():
     BAN = 'ban'
     UNBAN = 'unban'
-    
+
     def __init__(self):
         self.bandict = {}
 
