@@ -8,9 +8,10 @@ import fileinput
 import time
 
 
+
 def convert_time(timest):
     """Converts a string into a datetime
-    
+
     timestr -- input time string of '%Y-%m-%d %H:%M:%S'
     """
     fixed_ts = timest.split(',')[0]
@@ -19,6 +20,9 @@ def convert_time(timest):
 
 
 class BanAlyzer():
+    BAN = 'ban'
+    UNBAN = 'unban'
+    
     def __init__(self):
         self.bandict = {}
 
@@ -32,26 +36,19 @@ class BanAlyzer():
         banned_ip = line_parts[-1].strip()
         return timest, banned_ip
 
-    def add_ban(self, timest, ip):
+    def add(self, bantype, timest, ip):
         self._check_init_ip(ip)
-        self.bandict[ip]['ban'].append(timest)
-
-    def add_unban(self, timest, ip):
-        self._check_init_ip(ip)
-        self.bandict[ip]['unban'].append(timest)
+        self.bandict[ip][bantype].append(timest)
 
     def process(self, line):
         if 'fail2ban.actions' in line:
             if ' Ban ' in line:
-                
                 timest, banned_ip = self._strip_timest_and_ip(line)
-                self.add_ban(timest, banned_ip)
+                self.add(self.BAN, timest, banned_ip)
             elif ' Unban ' in line:
-                line_parts = line.split(' ')
-                timest = " ".join(line_parts[0:2])
-                banned_ip = line_parts[-1].strip()
-                self.add_unban(timest, banned_ip)
-            
+                timest, banned_ip = self._strip_timest_and_ip(line)
+                self.add(self.UNBAN, timest, banned_ip)
+
     def report(self):
         for key, value in self.bandict.items():
             if len(value['ban']) > 1:
@@ -62,7 +59,7 @@ class BanAlyzer():
                     if old is not None:
                         print(old, dt, dt - old)
                     old = dt
-            
+
 if __name__ == '__main__':
     ba = BanAlyzer()
     with fileinput.input() as f:
