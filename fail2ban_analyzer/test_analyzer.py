@@ -4,7 +4,7 @@ Created on 23.05.2017
 @author: cb
 '''
 import unittest
-from analyzer import convert_time
+from fail2ban_analyzer.analyzer import convert_time
 import time
 from time import mktime
 from datetime import datetime
