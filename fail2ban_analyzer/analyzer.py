@@ -3,20 +3,17 @@ Created on 23.05.2017
 
 @author: christophbecker
 '''
-import fileinput
 from datetime import datetime
+import fileinput
 import time
-from time import mktime
-from lib2to3.pytree import convert
-from distutils.msvccompiler import convert_mbcs
-
 def convert_time(timest):
-    """
-    @return: datetime
+    """Converts a string into a datetime
+    
+    timestr -- input time string of '%Y-%m-%d %H:%M:%S'
     """
     fixed_ts = timest.split(',')[0]
     time_tuple = time.strptime(fixed_ts,'%Y-%m-%d %H:%M:%S')
-    return datetime.fromtimestamp(mktime(time_tuple)) 
+    return datetime.fromtimestamp(time.mktime(time_tuple)) 
 
 class BanAlyzer():
     def __init__(self):
