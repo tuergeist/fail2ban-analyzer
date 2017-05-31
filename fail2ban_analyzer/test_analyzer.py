@@ -1,7 +1,5 @@
 '''
-Created on 23.05.2017
-
-@author: cb
+i 
 '''
 import unittest
 from datetime import datetime, timedelta
